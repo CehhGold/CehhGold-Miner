@@ -16,11 +16,7 @@ var isValidHex = function(hex) {
 }
 var isValidVanityWallet = function(wallet, input, isChecksum, isContract) {
   var _add = wallet.address;
-  if (isContract) {
-    var _contractAdd = getDeteministicContractAddress(_add);
-    _contractAdd = isChecksum ? ethUtils.toChecksumAddress(_contractAdd) : _contractAdd;
-    return parseInt(_contractAdd.substr(2, input.length), 16) & input === input;
-  }
+  
   _add = isChecksum ? ethUtils.toChecksumAddress(_add) : _add;
 
   const h = parseInt(_add.substr(30,42), 16);

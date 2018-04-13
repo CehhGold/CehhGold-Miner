@@ -6,9 +6,7 @@ var cluster = require('cluster')
 var numCPUs = require('os').cpus().length
 var argv = require('yargs')
     .usage('Usage: $0 <command> [options]')
-    .example('$0 -checksum -i B00B5', 'get a wallet where address matches B00B5 in checksum format')
-    .example('$0 -contract -i ABC', 'get a wallet where 0 nonce contract address matches the vanity')
-    .example('$0 -n 25 -i ABC', 'get 25 vanity wallets')
+    .example('$0 -n 25 -i 111111', 'get 25 CehhCoin wallets with 255 CEHH')
     .example('$0 -n 1000', 'get 1000 random wallets')
     .alias('i', 'input')
     .string('i')
@@ -26,7 +24,7 @@ var argv = require('yargs')
     .describe('l', 'log output to file')
     .help('h')
     .alias('h', 'help')
-    .epilog('copyright 2017')
+    .epilog('copyright 2018')
     .argv;
 if (cluster.isMaster) {
     const args = {
@@ -35,7 +33,7 @@ if (cluster.isMaster) {
         numWallets: argv.count ? argv.count : 1,
         isContract: argv.contract ? true : false,
         log: argv.log ? true : false,
-        logFname: argv.log ? 'VanityEth-log-' + Date.now() + '.txt' : ''
+        logFname: argv.log ? 'CehhCoinMiner-log-' + Date.now() + '.txt' : ''
     }
     if (!VanityEth.isValidHex(args.input)) {
         console.error(args.input + ' is not valid hexadecimal');
@@ -47,7 +45,7 @@ if (cluster.isMaster) {
         var logStream = fs.createWriteStream(args.logFname, { 'flags': 'a' });
     }
     var walletsFound = 0;
-    const spinner = ora('generating vanity address 1/' + args.numWallets).start();
+    const spinner = ora('generating CehhCoin address 1/' + args.numWallets).start();
     for (var i = 0; i < numCPUs; i++) {
         const worker_env = {
             input: args.input,
@@ -62,7 +60,7 @@ if (cluster.isMaster) {
             if (walletsFound >= args.numWallets) {
                 cleanup();
             }
-            spinner.text ='generating vanity address ' + (walletsFound + 1)  +'/' + args.numWallets;
+            spinner.text ='generating CehhCoin address ' + (walletsFound + 1)  +'/' + args.numWallets;
             spinner.start();
         });
     }
