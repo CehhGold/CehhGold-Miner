@@ -24,7 +24,7 @@ var argv = require('yargs')
   .describe('l', 'log output to file')
   .help('h')
   .alias('h', 'help')
-  .epilog('copyright 2018')
+  .epilog('copyright 2018 (jk do whatever you want)')
   .argv;
 if (cluster.isMaster) {
   const args = {
@@ -59,7 +59,7 @@ if (cluster.isMaster) {
       if (walletsFound >= args.numWallets) {
         cleanup();
       }
-      spinner.text ='walking in the high grass';
+      spinner.text ='walking in the tall grass';
       spinner.start();
     });
   }

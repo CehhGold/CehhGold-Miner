@@ -41,5 +41,4 @@ var getVanityWallet = function(input = '', diffMask = 3) {
 module.exports = {
   getVanityWallet: getVanityWallet,
   isValidHex: isValidHex,
-  ERRORS: ERRORS
 }
