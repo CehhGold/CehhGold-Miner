@@ -9,10 +9,12 @@ var numCPUs = require('os').cpus().length
 var argv = require('yargs')
   .usage('Usage: $0 <command> [options]')
   .example('$0 -d 10 -r 15', 'search with 10 bit difficulty for a tier 1 rarity Pokemon')
-  .example('$0 -n 1000', 'get 1000 random wallets')
   .alias('r', 'input')
   .string('r')
   .describe('r', 'rarity')
+  .alias('t', 'threads')
+  .string('t')
+  .describe('t', 'threads')
   .alias('d', 'diff')
   .string('d')
   .describe('d', 'diff mask')
@@ -29,6 +31,7 @@ var argv = require('yargs')
 if (cluster.isMaster) {
   const args = {
     input: argv.input ? argv.input : 10,
+    threads: argv.threads < numCPUs ? argv.input : numCPUs,
     diffMask: argv.diff ? argv.diff : 3,
     numWallets: argv.count ? argv.count : 1,
     log: argv.log ? true : false,
@@ -46,7 +49,7 @@ if (cluster.isMaster) {
   var walletsFound = 0;
   console.log("PKTH Miner","\n+ + + + + + + + + + + + + + + + + +", "\nDifficulty: " + args.diffMask, "\nRarity objective: " + args.input, "\n+ + + + + + + + + + + + + + + + + +");
   const spinner = ora('walking in the tall grass').start();
-  for (var i = 0; i < numCPUs; i++) {
+  for (var i = 0; i < args.threads; i++) {
     const worker_env = {
       input: args.input,
       diffMask: args.diffMask

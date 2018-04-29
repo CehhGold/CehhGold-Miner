@@ -1,6 +1,6 @@
 {
   "name": "erc891-miner",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "ERC 891 Miner",
   "main": "index.js",
   "scripts": {

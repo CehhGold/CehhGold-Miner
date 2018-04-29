@@ -32,10 +32,8 @@ var getVanityWallet = function(input = '', diffMask = 3) {
   input = input.toLowerCase();
   var _wallet = getRandomWallet();
   var g = 0;
-  console.time('t');
   while (!isValidVanityWallet(_wallet, input, diffMask)) { g++;  _wallet = getRandomWallet(); }
-  console.log("\n", g)
-  console.timeEnd('t');
+  console.log("\n Generated " + g + " wallets.");
   return _wallet;
 }
 module.exports = {
