@@ -45,7 +45,7 @@ if (cluster.isMaster) {
   }
   var walletsFound = 0;
   console.log("PKTH Miner","\n+ + + + + + + + + + + + + + + + + +", "\nDifficulty: " + args.diffMask, "\nRarity objective: " + args.input, "\n+ + + + + + + + + + + + + + + + + +");
-  const spinner = ora('walking in the high grass').start();
+  const spinner = ora('walking in the tall grass').start();
   for (var i = 0; i < numCPUs; i++) {
     const worker_env = {
       input: args.input,

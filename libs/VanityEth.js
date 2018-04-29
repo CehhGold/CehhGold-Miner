@@ -1,8 +1,6 @@
 const crypto = require('crypto');
 var ethUtils = require('ethereumjs-util');
-var ERRORS = {
-  invalidHex: "Invalid hex input"
-}
+
 var getRandomWallet = function() {
   var randbytes = crypto.randomBytes(32);
   var address = '0x' + ethUtils.privateToAddress(randbytes).toString('hex');
@@ -39,9 +37,6 @@ var getVanityWallet = function(input = '', diffMask = 3) {
   console.log("\n", g)
   console.timeEnd('t');
   return _wallet;
-}
-var getDeteministicContractAddress = function(address) {
-  return '0x' + ethUtils.sha3(ethUtils.rlp.encode([address, 0])).slice(12).toString('hex');
 }
 module.exports = {
   getVanityWallet: getVanityWallet,
