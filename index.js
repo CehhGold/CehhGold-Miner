@@ -28,7 +28,7 @@ var argv = require('yargs')
   .argv;
 if (cluster.isMaster) {
   const args = {
-    input: argv.input ? argv.input : '',
+    input: argv.input ? argv.input : 10,
     diffMask: argv.diff ? argv.diff : 3,
     numWallets: argv.count ? argv.count : 1,
     log: argv.log ? true : false,
