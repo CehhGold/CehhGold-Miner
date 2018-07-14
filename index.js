@@ -13,6 +13,10 @@ var argv = require('yargs')
   .alias('r', 'input')
   .string('r')
   .describe('r', 'rarity')
+  .alias('a', 'address')
+  .string('a')
+  .describe('a', 'address')
+  .option('a', {demand: true, demand: 'address is required'})
   .alias('t', 'threads')
   .string('t')
   .describe('t', 'threads')
@@ -31,6 +35,7 @@ var argv = require('yargs')
   .argv;
 if (cluster.isMaster) {
   const args = {
+    address: argv.address,
     input: argv.input ? argv.input : 15,
     threads: argv.threads < numCPUs ? argv.input : numCPUs,
     diffMask: argv.diff ? argv.diff : 3,
@@ -57,7 +62,7 @@ if (cluster.isMaster) {
     }
     proc = cluster.fork(worker_env);
     proc.on('message', function(message) {
-      spinner.succeed(JSON.stringify(message) + "\nSigned Message: " + signer.signWithKey(message.privKey).signature);
+      spinner.succeed(JSON.stringify(message) + "\nSigned Message: " + signer.signWithKey(message.privKey, args.address).signature);
       if (args.log) logStream.write(JSON.stringify(message) + "\n");
       walletsFound++;
       if (walletsFound >= args.numWallets) {
