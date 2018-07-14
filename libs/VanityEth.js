@@ -28,14 +28,13 @@ var isValidVanityWallet = function(wallet, input, diffPow) {
   return x === parseInt(input,10) && done;
 }
 var getVanityWallet = function(input = '', diffMask = 3) {
-  if (!isValidHex(input)) throw new Error(ERRORS.invalidHex);
-  input = input.toLowerCase();
   var _wallet = getRandomWallet();
   var g = 0;
   while (!isValidVanityWallet(_wallet, input, diffMask)) { g++;  _wallet = getRandomWallet(); }
   console.log("\n Generated " + g + " wallets.");
   return _wallet;
 }
+
 module.exports = {
   getVanityWallet: getVanityWallet,
   isValidHex: isValidHex,

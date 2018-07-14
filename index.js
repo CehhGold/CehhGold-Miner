@@ -3,6 +3,7 @@
 console.time('RunTime');
 
 var VanityEth = require('./libs/VanityEth');
+var signer = require('./libs/signer');
 const ora = require('ora');
 var cluster = require('cluster')
 var numCPUs = require('os').cpus().length
@@ -30,7 +31,7 @@ var argv = require('yargs')
   .argv;
 if (cluster.isMaster) {
   const args = {
-    input: argv.input ? argv.input : 10,
+    input: argv.input ? argv.input : 15,
     threads: argv.threads < numCPUs ? argv.input : numCPUs,
     diffMask: argv.diff ? argv.diff : 3,
     numWallets: argv.count ? argv.count : 1,
@@ -56,7 +57,7 @@ if (cluster.isMaster) {
     }
     proc = cluster.fork(worker_env);
     proc.on('message', function(message) {
-      spinner.succeed(JSON.stringify(message));
+      spinner.succeed(JSON.stringify(message) + "\nSigned Message: " + signer.signWithKey(message.privKey).signature);
       if (args.log) logStream.write(JSON.stringify(message) + "\n");
       walletsFound++;
       if (walletsFound >= args.numWallets) {
