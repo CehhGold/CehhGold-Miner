@@ -52,7 +52,7 @@ if (cluster.isMaster) {
 
   console.clear();
   console.log(chalk.underline(chalk.red("Pok") + chalk.bgBlack.white("ETH")));
-  console.log(chalk.yellow("Difficulty: ") + chalk.red(args.diffMask));
+  console.log(chalk.blue("Difficulty: ") + chalk.red(args.diffMask));
   console.log("\n");
 
   const spinner = ora({ text: chalk.green('Walking in the tall grass...'), color : 'yellow', stream : process.stdout }).start();
@@ -77,9 +77,9 @@ if (cluster.isMaster) {
 
 async function printFind(message, spinner, args) {
       const item = await fetcher.getPokethItem(message.wallet.address); 
-      const itemClass = item === 9000 ? 'Error fetching' : item;
+      const itemClass = item === '9000' ? 'Error fetching' : item;
       
-      const signature      = signer.signWithKey(message.privKey, args.address).signature;
+      const signature      = signer.signWithKey(message.wallet.privKey, args.address).signature;
       const printWallet    = (chalk.underline("Found a valid wallet!") + 
                               chalk.blue("\nAddress:     " + chalk.yellow(message.wallet.address) +
                                          "\nPrivate Key: " + chalk.yellow("0x" + message.wallet.privKey)));
