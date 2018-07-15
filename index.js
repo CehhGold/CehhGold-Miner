@@ -4,6 +4,7 @@ console.time('RunTime');
 
 var VanityEth = require('./libs/VanityEth');
 var signer    = require('./libs/signer');
+var fetcher   = require('./libs/dataFetch');
 const ora     = require('ora');
 var cluster   = require('cluster')
 var numCPUs   = require('os').cpus().length
@@ -63,27 +64,7 @@ if (cluster.isMaster) {
     proc = cluster.fork(worker_env);
     
     proc.on('message', function(message) {
-      const signature      = signer.signWithKey(message.privKey, args.address).signature;
-      const printWallet    = (chalk.underline("Found a valid wallet!") + 
-                              chalk.blue("\nAddress:     " + chalk.yellow(message.wallet.address) +
-                                         "\nPrivate Key: " + chalk.yellow("0x" + message.wallet.privKey)));
-      const printSignature = (chalk.underline("Signature Information:") + 
-                              chalk.blue("\nSignature:      " + chalk.yellow(signature) +
-                                         "\nItem Bit Class: " + chalk.yellow(message.bits)));
-      
-      spinner.succeed(printWallet);
-      spinner.info(printSignature);
-      console.log(chalk.white("----------------------------------------------------------------------------------"));
-
-      const logObject = {};
-      logObject[message.bits] = [];
-      logObject[message.bits].push(message.wallet);
-      logObject[message.bits].push({"signature" : signature});
-
-      if (args.log) logStream.write(JSON.stringify(logObject) + " \n");
-      
-      spinner.text = chalk.green('Walking in the tall grass');
-      spinner.start();
+      printFind(message, spinner, args);
     });
   }
 
@@ -93,6 +74,36 @@ if (cluster.isMaster) {
     process.send(VanityEth.getVanityWallet(worker_env.diffMask))
   }
 }
+
+async function printFind(message, spinner, args) {
+      const item = await fetcher.getPokethItem(message.wallet.address); 
+      const itemClass = item === 9000 ? 'Error fetching' : item;
+      
+      const signature      = signer.signWithKey(message.privKey, args.address).signature;
+      const printWallet    = (chalk.underline("Found a valid wallet!") + 
+                              chalk.blue("\nAddress:     " + chalk.yellow(message.wallet.address) +
+                                         "\nPrivate Key: " + chalk.yellow("0x" + message.wallet.privKey)));
+      const printSignature = (chalk.underline("Signature Information:") + 
+                              chalk.blue("\nSignature:      " + chalk.yellow(signature) +
+                                         "\nItem Bit Class: " + chalk.yellow(message.bits) +
+                                         "\nItem Class:     " + chalk.white(itemClass)));
+
+      spinner.succeed(printWallet);
+      spinner.info(printSignature);
+      console.log(chalk.white("----------------------------------------------------------------------------------"));
+
+      const logObject = {};
+      logObject[item] = [];
+      logObject[item].push({"bitClass" : message.bits});
+      logObject[item].push(message.wallet);
+      logObject[item].push({"signature" : signature});
+
+      if (args.log) logStream.write(JSON.stringify(logObject) + " \n");
+      
+      spinner.text = chalk.green('Walking in the tall grass');
+      spinner.start();
+}
+
 process.stdin.resume();
 var cleanup = function(options, err) {
   if (err) console.log(err.stack);
