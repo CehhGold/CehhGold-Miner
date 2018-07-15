@@ -2,40 +2,40 @@ const crypto = require('crypto');
 var ethUtils = require('ethereumjs-util');
 
 var getRandomWallet = function() {
-  var randbytes = crypto.randomBytes(32);
-  var address = '0x' + ethUtils.privateToAddress(randbytes).toString('hex');
+  var randbytes     = crypto.randomBytes(32);
+  var address       = '0x' + ethUtils.privateToAddress(randbytes).toString('hex');
+
   return { address: address, privKey: randbytes.toString('hex') }
 }
 var isValidHex = function(hex) {
-  if (!hex.length) return true;
-  hex = hex.toUpperCase();
-  var re = /^[0-9A-F]+$/g;
+  var re = /^0x[a-fA-F0-9]{40}$/g;
+  
   return re.test(hex);
 }
-var countBits = function(bin) {
-  return bin.toString(2).replace(/0/gi,'').length;
+var countBits = function(address) {
+  return parseInt(address.substr(-13), 16).toString(2).replace(/0/gi,'').length;
 }
-var isValidVanityWallet = function(wallet, input, diffPow) {
-  var _add = wallet.address;
+var isValidVanityWallet = function(wallet, diffPow) {
+  var _addr = wallet.address;
 
   const diffMask = Math.pow(2,diffPow)-1;
-  const h = parseInt(_add.substr(-13), 16)
-  const x = countBits(h);
+  const x        = countBits(_addr);
  
-  const diff = Math.floor(parseInt(_add.substr(2,6), 16));
+  const diff = Math.floor(parseInt(_addr.substr(2,6), 16));
   const done = (diff & diffMask) === 0;
 
-  return x === parseInt(input,10) && done;
+  return x <= 15 && done;
 }
-var getVanityWallet = function(input = '', diffMask = 3) {
-  var _wallet = getRandomWallet();
-  var g = 0;
-  while (!isValidVanityWallet(_wallet, input, diffMask)) { g++;  _wallet = getRandomWallet(); }
-  console.log("\n Generated " + g + " wallets.");
-  return _wallet;
+var getVanityWallet = function(diffMask = 3) {
+  var _wallet   = getRandomWallet();
+  var g         = 0;
+
+  while (!isValidVanityWallet(_wallet, diffMask)) { g++;  _wallet = getRandomWallet(); }
+  
+  return { wallet : _wallet, bits : countBits(_wallet.address) }
 }
 
 module.exports = {
-  getVanityWallet: getVanityWallet,
-  isValidHex: isValidHex,
+  getVanityWallet : getVanityWallet,
+  isValidHex      : isValidHex,
 }

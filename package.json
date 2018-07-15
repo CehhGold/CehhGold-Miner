@@ -1,6 +1,6 @@
 {
   "name": "erc891-miner",
-  "version": "1.5.2",
+  "version": "1.6.0",
   "description": "ERC 891 Miner",
   "main": "index.js",
   "scripts": {
@@ -25,7 +25,10 @@
     "erc891-miner": "index.js"
   },
   "dependencies": {
+    "better-console": "^1.0.1",
+    "colors": "^1.3.0",
     "ethereumjs-util": "^5.2.0",
+    "json-colorizer": "^1.1.1",
     "ora": "^1.3.0",
     "web3": "^1.0.0-beta.34",
     "yargs": "^7.0.1"
