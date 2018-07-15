@@ -10,35 +10,36 @@ var numCPUs   = require('os').cpus().length
 var chalk     = require('chalk');
 var argv      = require('yargs')
   .usage('Usage: $0 <command> [options]')
-  .example('$0 -d 10 -r 15', 'search with 10 bit difficulty for a tier 1 rarity Pokemon')
-  .alias('a', 'address')
+  .example(chalk.yellow('$0 -a 0xF7Dc813B5c746F777DD29c94b7558ADE7577064e'),
+    chalk.green('Search for Poketh items and get the signature authorizing address 0xF7Dc813B5c746F777DD29c94b7558ADE7577064e.'))
+  .alias('a', ('address'))
   .string('a')
-  .describe('a', 'address')
+  .describe('a', chalk.green('User address'))
   .option('a', {demand: true, demand: 'address is required'})
-  .alias('t', 'threads')
+  .alias('t', ('threads'))
   .string('t')
-  .describe('t', 'threads')
-  .alias('d', 'diff')
+  .describe('t', chalk.green('Threads to use for mining'))
+  .alias('d', ('diff'))
   .string('d')
-  .describe('d', 'diff mask')
-  .alias('l', 'log')
+  .describe('d', chalk.green('Difficulty Mask of the PKTH contract'))
+  .alias('l', ('log'))
   .boolean('l')
-  .describe('l', 'log output to file')
+  .describe('l', chalk.green('If set, do NOT log output to file'))
   .help('h')
-  .alias('h', 'help')
-  .epilog('copyright 2018 (jk do whatever you want)')
+  .alias('h', ('help'))
+  .epilog('copyright 2018')
   .argv;
 
 if (cluster.isMaster) {
   const args = {
       address    : argv.address,
-      threads    : argv.threads < numCPUs ? argv.input          : numCPUs,
-      diffMask   : argv.diff ? argv.diff                        : 3,
-      log        : argv.log ? true                              : false,
-      logFname   : argv.log ? 'PKTH-log-' + Date.now() + '.txt' : ''
+      threads    : argv.threads < numCPUs ? argv.input                      : numCPUs,
+      diffMask   : argv.diff ? argv.diff                                    : 3,
+      log        : argv.log ? false                                         : true,
+      logFname   : !argv.log ? 'Poketh-Miner-Output-' + Date.now() + '.txt' : ''
   }
   if (!VanityEth.isValidHex(args.address)) {
-    console.error(args.address+ ' is not valid address');
+    console.error(args.address + ' is not valid address');
     process.exit(1);
   }
   if (args.log) {
@@ -74,7 +75,12 @@ if (cluster.isMaster) {
       spinner.info(printSignature);
       console.log(chalk.white("----------------------------------------------------------------------------------"));
 
-      if (args.log) logStream.write(JSON.stringify(message.wallet) + "\nSigned Message: " + signer.signWithKey(message.privKey, args.address).signature + "\n");
+      const logObject = {};
+      logObject[message.bits] = [];
+      logObject[message.bits].push(message.wallet);
+      logObject[message.bits].push({"signature" : signature});
+
+      if (args.log) logStream.write(JSON.stringify(logObject) + " \n");
       
       spinner.text = chalk.green('Walking in the tall grass');
       spinner.start();
