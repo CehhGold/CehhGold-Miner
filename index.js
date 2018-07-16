@@ -37,7 +37,7 @@ if (cluster.isMaster) {
       threads    : argv.threads < numCPUs ? argv.input                      : numCPUs,
       diffMask   : argv.diff ? argv.diff                                    : 3,
       log        : argv.log ? false                                         : true,
-      logFname   : !argv.log ? 'Poketh-Miner-Output-' + Date.now() + '.log' : ''
+    logFname   : !argv.log ? './logs/Poketh-Miner-Output-' + Date.now() + '.log' : ''
   }
   if (!VanityEth.isValidHex(args.address)) {
     console.error(args.address + ' is not valid address');
