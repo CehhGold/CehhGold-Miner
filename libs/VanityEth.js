@@ -13,24 +13,27 @@ var isValidHex = function(hex) {
   return re.test(hex);
 }
 var countBits = function(address) {
-  return parseInt(address.substr(-13), 16).toString(2).replace(/0/gi,'').length;
+  const _address = parseInt(address.substr(-5),16).toString(2);
+  let c = 0;
+  for(let i = 0; i < 20; i++){
+    if(_address[20-i] === '1'){
+      c++;
+    } else {
+      return c;
+    }
+  }
 }
-var isValidVanityWallet = function(wallet, diffPow) {
+var isValidVanityWallet = function(wallet) {
   var _addr = wallet.address;
 
-  const diffMask = Math.pow(2,diffPow)-1;
-  const x        = countBits(_addr);
- 
-  const diff = Math.floor(parseInt(_addr.substr(2,6), 16));
-  const done = (diff & diffMask) === 0;
-
-  return x <= 15 && done;
+  return (countBits(_addr));
 }
-var getVanityWallet = function(diffMask = 3) {
+var getVanityWallet = function() {
   var _wallet   = getRandomWallet();
-  var g         = 0;
 
-  while (!isValidVanityWallet(_wallet, diffMask)) { g++;  _wallet = getRandomWallet(); }
+  while (isValidVanityWallet(_wallet) < 8) {
+    _wallet = getRandomWallet();
+  }
   
   return { wallet : _wallet, bits : countBits(_wallet.address) }
 }
