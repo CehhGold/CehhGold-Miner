@@ -2,6 +2,7 @@
 
 console.time('RunTime');
 
+var fs = require('fs');
 var VanityEth = require('./libs/VanityEth');
 var signer    = require('./libs/signer');
 var fetcher   = require('./libs/dataFetch');
@@ -22,7 +23,7 @@ var argv      = require('yargs')
   .describe('t', chalk.green('Threads to use for mining'))
   .alias('l', ('log'))
   .boolean('l')
-  .describe('l', chalk.green('If set, do NOT log output to file'))
+  .describe('l', chalk.green('Directory to output log files'))
   .help('h')
   .alias('h', ('help'))
   .epilog('copyright 2018')
@@ -31,24 +32,26 @@ var argv      = require('yargs')
 if (cluster.isMaster) {
   const args = {
     address    : argv.address,
-    threads    : argv.threads < numCPUs ? argv.input                      : numCPUs,
-    log        : argv.log ? false                                         : true,
-    logFname   : !argv.log ? './miner-logs/CehhGold-Miner-' + Date.now() + '.log' : ''
+    threads    : argv.threads < numCPUs ? argv.threads : numCPUs,
+    log        : !argv.log ? require('os').homedir() : argv.log,
+    logFname   : 'cehhgold-miner-' + Date.now() + '.log'
   }
   if (!VanityEth.isValidHex(args.address)) {
     console.error(args.address + ' is not valid address');
     process.exit(1);
   }
-  if (args.log) {
-    var fs = require('fs');
-    console.log('logging into' + args.logFname);
-    var logStream = fs.createWriteStream(args.logFname, { 'flags': 'a' });
+  
+  const dir = args.log + '/CehhGold/';
+  if (!fs.existsSync(dir)){
+    fs.mkdirSync(dir);
   }
+
+  var logStream = fs.createWriteStream(dir + args.logFname, { 'flags': 'a' });
+
   var walletsFound = 0;
 
   console.clear();
-  console.log(chalk.underline(chalk.bgBlack.white("CEHH+ Miner")));
-  console.log("\n");
+  console.log(chalk.underline(chalk.bgBlack.white("CEHH+ Miner")) + chalk.green('\n -> Logging to ' + dir + '\n'));
 
   const spinner = ora({ text: chalk.green('Running miner...'), color : 'yellow', stream : process.stdout }).start();
 
@@ -87,7 +90,7 @@ async function printFind(message, spinner, args) {
   console.log(chalk.white("----------------------------------------------------------------------------------"));
 
   const logObject = {};
-  logObject[message.bits] = message.wallet
+  logObject[message.bits] = [message.wallet,signature];
 
   if (args.log) logStream.write(JSON.stringify(logObject) + " \n");
 
