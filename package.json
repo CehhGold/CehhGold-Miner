@@ -1,7 +1,7 @@
 {
-  "name": "erc891-miner",
-  "version": "1.8.0",
-  "description": "ERC 891 Miner",
+  "name": "cehhgold-miner",
+  "version": "1.0.0",
+  "description": "CehhGold Miner",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -22,7 +22,7 @@
   ],
   "license": "MIT",
   "bin": {
-    "erc891-miner": "index.js"
+    "cehhgold-miner": "index.js"
   },
   "dependencies": {
     "better-console": "^1.0.1",
