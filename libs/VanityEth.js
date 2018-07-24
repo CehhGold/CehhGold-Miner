@@ -13,10 +13,10 @@ var isValidHex = function(hex) {
   return re.test(hex);
 }
 var countBits = function(address) {
-  const _address = parseInt(address.substr(-5),16).toString(2);
+  const _address = parseInt(address.substr(-20),16).toString(2);
   let c = 0;
-  for(let i = 0; i < 20; i++){
-    if(_address[20-i] === '1'){
+  for(let i = _address.length-1; i >= 0; i--){
+    if(_address[i] === '1'){
       c++;
     } else {
       return c;
@@ -26,12 +26,12 @@ var countBits = function(address) {
 var isValidVanityWallet = function(wallet) {
   var _addr = wallet.address;
 
-  return (countBits(_addr));
+  return countBits(_addr);
 }
 var getVanityWallet = function() {
   var _wallet   = getRandomWallet();
 
-  while (isValidVanityWallet(_wallet) < 8) {
+  while (isValidVanityWallet(_wallet) < 8*4) {
     _wallet = getRandomWallet();
   }
   

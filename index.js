@@ -33,7 +33,7 @@ if (cluster.isMaster) {
     address    : argv.address,
     threads    : argv.threads < numCPUs ? argv.input                      : numCPUs,
     log        : argv.log ? false                                         : true,
-    logFname   : !argv.log ? './miner-logs/DCD-Miner-' + Date.now() + '.log' : ''
+    logFname   : !argv.log ? './miner-logs/CehhGold-Miner-' + Date.now() + '.log' : ''
   }
   if (!VanityEth.isValidHex(args.address)) {
     console.error(args.address + ' is not valid address');
@@ -47,7 +47,7 @@ if (cluster.isMaster) {
   var walletsFound = 0;
 
   console.clear();
-  console.log(chalk.underline(chalk.bgBlack.white("DCD Miner")));
+  console.log(chalk.underline(chalk.bgBlack.white("CEHH+ Miner")));
   console.log("\n");
 
   const spinner = ora({ text: chalk.green('Running miner...'), color : 'yellow', stream : process.stdout }).start();
@@ -80,7 +80,7 @@ async function printFind(message, spinner, args) {
   const printSignature = (chalk.underline("Signature Information:") + 
     chalk.blue("\nSignature:        " + chalk.yellow(signature) +
       "\nReward Bit Class: " + chalk.yellow(message.bits) +
-      "\nReward:           " + chalk.white(reward) + " CDC"));
+      "\nReward:           " + chalk.white(reward) + " CehhGold"));
 
   spinner.succeed(printWallet);
   spinner.info(printSignature);
