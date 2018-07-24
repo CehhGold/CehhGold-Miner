@@ -13,7 +13,10 @@ var isValidHex = function(hex) {
   return re.test(hex);
 }
 var countBits = function(address) {
-  const _address = parseInt(address.substr(-20),16).toString(2);
+  const _addressA = parseInt(address.slice(-9),16).toString(2);
+  const _addressB = parseInt(address.slice(-19,-10),16).toString(2);
+  const _address  = _addressB.concat(_addressA);
+
   let c = 0;
   for(let i = _address.length-1; i >= 0; i--){
     if(_address[i] === '1'){
@@ -31,7 +34,7 @@ var isValidVanityWallet = function(wallet) {
 var getVanityWallet = function() {
   var _wallet   = getRandomWallet();
 
-  while (isValidVanityWallet(_wallet) < 8*4) {
+  while (isValidVanityWallet(_wallet) < 8 * 4) {
     _wallet = getRandomWallet();
   }
   
