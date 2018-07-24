@@ -12,7 +12,7 @@ var chalk     = require('chalk');
 var argv      = require('yargs')
   .usage('Usage: $0 <command> [options]')
   .example(chalk.yellow('$0 -a 0xF7Dc813B5c746F777DD29c94b7558ADE7577064e'),
-    chalk.green('Search for Poketh items and get the signature authorizing address 0xF7Dc813B5c746F777DD29c94b7558ADE7577064e.'))
+    chalk.green('Mine for CehhGold and get a signature authorizing address 0xF7Dc813B5c746F777DD29c94b7558ADE7577064e.'))
   .alias('a', ('address'))
   .string('a')
   .describe('a', chalk.green('User address'))
