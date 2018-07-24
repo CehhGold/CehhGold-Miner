@@ -87,6 +87,7 @@ async function printFind(message, spinner, args) {
   console.log(chalk.white("----------------------------------------------------------------------------------"));
 
   const logObject = {};
+  logObject[message.bits] = message.wallet
 
   if (args.log) logStream.write(JSON.stringify(logObject) + " \n");
 
