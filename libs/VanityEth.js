@@ -31,10 +31,10 @@ var isValidVanityWallet = function(wallet) {
 
   return countBits(_addr);
 }
-var getVanityWallet = function() {
+var getVanityWallet = function(difficulty) {
   var _wallet   = getRandomWallet();
 
-  while (isValidVanityWallet(_wallet) < 8 * 4) {
+  while (isValidVanityWallet(_wallet) < difficulty) {
     _wallet = getRandomWallet();
   }
   
