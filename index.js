@@ -1,6 +1,6 @@
 #! /usr/bin/env node
 
-var chalk     = require('chalk');
+var chalk = require('chalk');
 var argv = require('yargs')
   .describe('CEHH+ Miner')
   .command(require('./miner'))

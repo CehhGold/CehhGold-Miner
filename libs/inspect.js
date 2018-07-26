@@ -17,7 +17,7 @@ const getLogs = async (argv) => {
   const buffer = await readFiles(dir);
   const data   = buffer.join();
 
-  let logs     = ('[' + data.replace(/,,/g,',').slice(0,-1) + ']' );
+  let logs     = ('[' + data.replace(/,+/g,',').slice(0,-1) + ']' );
   let ordered  = (JSON.parse(logs).sort((a,b) => {
     return parseInt(Object.keys(b)[0]) - parseInt(Object.keys(a)[0])
   }));
@@ -49,7 +49,7 @@ const getLogs = async (argv) => {
       }
     },
   ];
-  
+
   inquirer
     .prompt(questions)
     .then((answers) => {
@@ -70,7 +70,7 @@ const getLogs = async (argv) => {
           const printOut        = [printSignature,printWallet,printPrivateKey].join("\n");
           console.log(printOut);
           console.log(chalk.white("----------------------------------------------------------------------------------"));
-        
+
         });
       }
     })
@@ -91,16 +91,10 @@ const readFiles = (dir) => {
         } else {
           fc = f.length;
           f.forEach(function(file){
-            fs.readFile(dir + file, 'utf-8', function(e,c){
-              if(e) {
-                reject(e);
-              } else {
-                buffer.push(c);
-                if(--fc === 0){
-                  resolve((buffer));
-                }
-              }
-            });
+            buffer.push(fs.readFileSync(dir + file, 'utf-8'));
+            if(--fc === 0){
+              resolve((buffer));
+            }
           });
         }
       });
