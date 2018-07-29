@@ -15,7 +15,7 @@ const run = (argv) => {
   if (cluster.isMaster) {
     const args = {
       address    : argv.address,
-      difficulty : argv.difficulty || 30,
+      difficulty : argv.difficulty || 28,
       threads    : argv.threads < numCPUs ? argv.threads : numCPUs,
       log        : !argv.log ? require('os').homedir() : argv.log,
       logFname   : 'cehhgold-miner-' + Date.now() + '.log'

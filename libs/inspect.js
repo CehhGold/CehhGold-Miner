@@ -45,7 +45,7 @@ const getLogs = async (argv) => {
       name: 'difficulty',
       message: 'Which bit difficulty tier do you want to print out?',
       validate: (value) => {
-        return value.match(/^[0-9]{0,4}$/) && count[value] ? true : 'Please type a number.\n(Bit difficulties range from 0 to 1360)';
+        return value.match(/^[0-9]{0,4}$/) && count[value] ? true : 'Please type a number.\n(Bit difficulties range from 0 to 72)';
       }
     },
   ];
@@ -59,7 +59,7 @@ const getLogs = async (argv) => {
       if(result.length === 0) {
         console.log('Something went wrong!'); 
       } else {
-        result.forEach((v) => {
+        result.reverse..forEach((v) => {
           const wallet      = v[diff][0];
           const signature   = v[diff][1];
 
