@@ -59,7 +59,7 @@ const getLogs = async (argv) => {
       if(result.length === 0) {
         console.log('Something went wrong!'); 
       } else {
-        result.reverse..forEach((v) => {
+        result.reverse().forEach((v) => {
           const wallet      = v[diff][0];
           const signature   = v[diff][1];
 
