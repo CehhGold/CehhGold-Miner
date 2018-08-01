@@ -1,6 +1,5 @@
 #! /usr/bin/env node
 
-
 var fs        = require('fs');
 var VanityEth = require('./libs/VanityEth');
 var inspect   = require('./libs/inspect');
@@ -30,9 +29,7 @@ const run = (argv) => {
       fs.mkdirSync(dir);
     }
 
-    var logStream = fs.createWriteStream(dir + args.logFname, { 'flags': 'a' });
-
-    var walletsFound = 0;
+    var logStream   = fs.createWriteStream(dir + args.logFname, { 'flags': 'a' });
 
     console.clear();
     console.log(chalk.underline(chalk.bgBlack.white("CEHH+ Miner")) + chalk.green('\n -> Logging to ' + dir + '\n'));
@@ -43,19 +40,27 @@ const run = (argv) => {
       const worker_env = {
         difficulty: args.difficulty
       }
+
+      let t1 = Date.now();
       proc = cluster.fork(worker_env);
 
       proc.on('message', function(message) {
-        printFind(message, spinner, args);
+        if(message.topic === 'WALLET') {
+          printFind(message.data, spinner, args);
+        } else if(message.topic === 'HASHES') {
+          spinner.text = chalk.green('Running miner...    (wps = ' +
+            chalk.yellow(Math.floor(1000 * message.data.hashes / -(t1 - (t1 = Date.now()))))) +
+            chalk.green(')');
+        }
       });
     }
-
   } else {
     const worker_env = process.env;
     while (true) {
       process.send(VanityEth.getVanityWallet(worker_env.difficulty))
     }
   }
+
 
   async function printFind(message, spinner, args) {
     const reward         = await fetcher.getReward(message.wallet.address) / Math.pow(10,18);

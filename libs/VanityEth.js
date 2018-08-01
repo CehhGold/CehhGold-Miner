@@ -32,13 +32,18 @@ var isValidVanityWallet = function(wallet) {
   return countBits(_addr);
 }
 var getVanityWallet = function(difficulty) {
-  var _wallet   = getRandomWallet();
+  let _wallet   = getRandomWallet();
+  let hashes    = 0;
+  const t0      = Date.now();
 
   while (isValidVanityWallet(_wallet) < difficulty) {
     _wallet = getRandomWallet();
+    hashes++;
+    if(Date.now() > t0 + 1000 && hashes > 1000)
+      return { topic: "HASHES", data: { hashes: hashes, time : Date.now() - t0 } }
   }
   
-  return { wallet : _wallet, bits : countBits(_wallet.address) }
+  return { topic: "WALLET", data: { wallet : _wallet, bits : countBits(_wallet.address), hashes: hashes } }
 }
 
 module.exports = {
