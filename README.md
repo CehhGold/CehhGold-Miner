@@ -1,6 +1,6 @@
-# CehhCoin Miner
+# CehhGold Miner
 
-Nodejs based tool to mine ERC 891.
+Node based tool to mine ERC 891.
 
 
 License

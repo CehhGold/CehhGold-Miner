@@ -3,10 +3,7 @@
 
 var fs        = require('fs');
 var VanityEth = require('./libs/VanityEth');
-var inspect   = require('./libs/inspect');
 var signer    = require('./libs/signer');
-var fetcher   = require('./libs/dataFetch');
-const ora     = require('ora');
 var cluster   = require('cluster')
 var numCPUs   = require('os').cpus().length
 var chalk     = require('chalk');
@@ -17,27 +14,15 @@ const run = (argv) => {
       address    : argv.address,
       difficulty : argv.difficulty || 28,
       threads    : argv.threads < numCPUs ? argv.threads : numCPUs,
-      log        : !argv.log ? require('os').homedir() : argv.log,
-      logFname   : 'cehhgold-miner-' + Date.now() + '.log'
     }
     if (!VanityEth.isValidHex(args.address)) {
       console.error(args.address + ' is not valid address');
       process.exit(1);
     }
 
-    const dir = args.log + '/CehhGold/';
-    if (!fs.existsSync(dir)){
-      fs.mkdirSync(dir);
-    }
-
-    var logStream = fs.createWriteStream(dir + args.logFname, { 'flags': 'a' });
-
     var walletsFound = 0;
 
     console.clear();
-    console.log(chalk.underline(chalk.bgBlack.white("CEHH+ Miner")) + chalk.green('\n -> Logging to ' + dir + '\n'));
-
-    const spinner = ora({ text: chalk.green('Running miner...'), color : 'yellow', stream : process.stdout }).start();
 
     for (var i = 0; i < args.threads; i++) {
       const worker_env = {
@@ -46,7 +31,7 @@ const run = (argv) => {
       proc = cluster.fork(worker_env);
 
       proc.on('message', function(message) {
-        printFind(message, spinner, args);
+        printFind(message, args);
       });
     }
 
@@ -57,9 +42,7 @@ const run = (argv) => {
     }
   }
 
-  async function printFind(message, spinner, args) {
-    const reward         = await fetcher.getReward(message.wallet.address) / Math.pow(10,18);
-
+  async function printFind(message, args) {
     const signature      = signer.signWithKey(message.wallet.privKey, args.address).signature;
     const printWallet    = (chalk.underline(  "Found a valid wallet!  " ) +
       chalk.blue(" \nAddress:             " + chalk.yellow(message.wallet.address) +
@@ -67,19 +50,12 @@ const run = (argv) => {
     const printSignature = (chalk.underline( " Signature Information: " ) +
       chalk.blue(" \nSignature:           " + chalk.yellow(signature) +
         " \nDifficulty:          " + chalk.yellow(message.bits) +
-        " \nReward:              " + chalk.white(reward) +" CehhGold" ));
-
-    spinner.succeed(printWallet);
-    spinner.info(printSignature);
-    console.log(chalk.white("----------------------------------------------------------------------------------"));
+        " \nReward:              " + chalk.white(-1) +" CehhGold" ));
 
     const logObject = {};
     logObject[message.bits] = [message.wallet,signature];
 
-    if (args.log) logStream.write(JSON.stringify(logObject) + ",");
-
-    spinner.text = chalk.green('Running miner...');
-    spinner.start();
+    console.log(logObject)
   }
 
   process.stdin.resume();
