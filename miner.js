@@ -30,11 +30,11 @@ const run = (argv) => {
     }
 
     var logStream   = fs.createWriteStream(dir + args.logFname, { 'flags': 'a' });
-
+    const header    = chalk.underline(chalk.bgBlack.white("CEHH+ Miner")) + chalk.green('\n -> Logging to ' + dir + '\n');
+    
     console.clear();
-    console.log(chalk.underline(chalk.bgBlack.white("CEHH+ Miner")) + chalk.green('\n -> Logging to ' + dir + '\n'));
-
-    const spinner = ora({ text: chalk.green('Running miner...'), color : 'yellow', stream : process.stdout }).start();
+    console.log(header);
+    const spinner = ora({ text: chalk.green('Running miner...'), color : 'yellow', stream : process.stderr }).start();
 
     for (var i = 0; i < args.threads; i++) {
       const worker_env = {
@@ -48,9 +48,9 @@ const run = (argv) => {
         if(message.topic === 'WALLET') {
           printFind(message.data, spinner, args);
         } else if(message.topic === 'HASHES') {
-          spinner.text = chalk.green('Running miner...    (wps = ' +
-            chalk.yellow(Math.floor(1000 * message.data.hashes / -(t1 - (t1 = Date.now()))))) +
-            chalk.green(')');
+          spinner.text = chalk.green('Running miner...    [' +
+            chalk.yellow(Math.floor(args.threads * 1000 * message.data.hashes / -(t1 - (t1 = Date.now()))))) +
+            chalk.green(' wps]');
         }
       });
     }
@@ -61,6 +61,8 @@ const run = (argv) => {
     }
   }
 
+  // ------------------------------------------------------------------------------------------------------------
+  // ------------------------------------------------------------------------------------------------------------
 
   async function printFind(message, spinner, args) {
     const reward         = await fetcher.getReward(message.wallet.address) / Math.pow(10,18);

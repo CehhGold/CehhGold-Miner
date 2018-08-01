@@ -38,12 +38,12 @@ var getVanityWallet = function(difficulty) {
 
   while (isValidVanityWallet(_wallet) < difficulty) {
     _wallet = getRandomWallet();
-    hashes++;
-    if(Date.now() > t0 + 1000 && hashes > 1000)
-      return { topic: "HASHES", data: { hashes: hashes, time : Date.now() - t0 } }
+    hashes = hashes + 1;
+    if(t0 + 1000 * 5 < Date.now())
+      return { topic: "HASHES", data: { hashes: hashes } };
   }
-  
-  return { topic: "WALLET", data: { wallet : _wallet, bits : countBits(_wallet.address), hashes: hashes } }
+
+  return { topic: "WALLET", data: { wallet : _wallet, bits : countBits(_wallet.address), hashes: hashes } };
 }
 
 module.exports = {
